@@ -1,56 +1,58 @@
-#include <stdio.h>	 // printf(), scanf()
-#include <string.h>	 // strlen()
-#include <stdbool.h> // bool
-#include <signal.h>	 // signal()
-#include <stdlib.h>	 // exit()
-#include <ctype.h>	 // tolower()
+#include <stdio.h>		// printf(), scanf()
+#include <stdlib.h>		// exit()
+#include <signal.h>		// signal()
+#include <limits.h>		// INT_MAX
+#include "palindrome.h" // isPalindrome()
 
-void isPalindrome(char string[])
-{
-	int length = strlen(string); // length of string
-	bool palindrome = true;		 // assume string is a palindrome
+#define TRUE 1 // true value
 
-	/*
-		check if string is a palindrome, ignoring case
-		comparing first and last characters, then second and second last characters, etc.
-		until the middle of the string is reached
-	*/
-	for (int i = 0; i < length / 2; i++)
-	{
-		if (tolower(string[i]) != tolower(string[length - i - 1]))
-		{
-			palindrome = false;
-			break;
-		}
-	}
-
-	// print result
-	if (palindrome)
-	{
-		printf("%s is a palindrome\n", string);
-	}
-	else
-	{
-		printf("%s is not a palindrome\n", string);
-	}
-}
-
-// signal handler for SIGINT
+// Signal handler function
+/**
+ * @brief Signal handler function.
+ *
+ * This function is called when a signal is received.
+ *
+ * @param signal The signal number.
+ */
 void signal_handler(int signal)
 {
-	printf("Signal %d received\n", signal);
-	exit(0);
+	printf("Signal %d received\n", signal); // print signal number
+	exit(EXIT_SUCCESS);						// exit with success
 }
 
 // main function
 int main(int argc, char *argv[])
 {
-	signal(SIGINT, signal_handler); // register signal handler for SIGINT
+	// Handle SIGINT
+	signal(SIGINT, signal_handler);
 
-	char string[100]; // string to check
+	// Handle SIGTERM
+	signal(SIGTERM, signal_handler);
+
+	int stringLength; // length of string to check
+
+	printf("Enter the number of characters in the string:\n"); // prompt user for string length
+	if (scanf("%d", &stringLength) != 1)					   // read string length from stdin
+	{
+		printf("Error: Invalid input\n"); // print error message
+		return EXIT_FAILURE;			  // exit with failure
+	}
+
+	if (stringLength <= 0 || stringLength > INT_MAX) // check if string length is valid
+	{
+		printf("Error: Invalid string length\n"); // print error message
+		return EXIT_FAILURE;					  // exit with failure
+	}
+
+	char *string = malloc(stringLength + 1); // string to check
+	if (string == NULL)						 // check if memory allocation failed
+	{
+		printf("Error: Memory allocation failed\n"); // print error message
+		return EXIT_FAILURE;						 // exit with failure
+	}
 
 	// loop until SIGINT is received
-	while (1)
+	while (TRUE) // infinite loop (until SIGINT is received)
 	{
 		printf("Enter a string: "); // prompt user for string
 		scanf("%s", string);		// read string from stdin
@@ -58,5 +60,6 @@ int main(int argc, char *argv[])
 		isPalindrome(string); // check if string is a palindrome
 	}
 
-	return 0; // exit with success
+	free(string);		 // free memory allocated for string
+	return EXIT_SUCCESS; // exit with success
 }
