@@ -1,17 +1,17 @@
 /*
 
-* File: main_2_GPIO.c
+* File: main_3_GPIO.c
 
 * Name: Vasilaki Gjorgjioski
 
 * Date: 15.12.2023
 
-* Version: 2.0
+* Version: 3.0
 
 * Description: This application controls the blinking rate of two LEDs attached to GPIO pins. The user is able to select the blinking frequency by entering the desired value in Hz. The application is stopped by pressing CTRL+C.
 
 */
-#include "gpio_control.h" // GPIO control functions
+#include "3_gpio_control.h" // GPIO control functions
 
 int main()
 {
@@ -20,6 +20,9 @@ int main()
 
 	// Handle SIGTERM
 	signal(SIGTERM, signal_handler);
+
+	// Handle SIGALRM
+	signal(SIGALRM, signal_handler);
 
 	// Export GPIO pins
 	if (export_gpio(GPIO_LED1_PIN) == FAILURE || export_gpio(GPIO_LED2_PIN) == FAILURE)
@@ -35,24 +38,21 @@ int main()
 		return FAILURE;									   // return with failure
 	}
 
-	// Toggle LEDs until SIGINT is received
+	// Ask user for frequency input
+	int frequency;						   // LED blink frequency
+	printf("Enter LED blink frequency: "); // prompt user for frequency
+	scanf("%d", &frequency);			   // read frequency from stdin
+
+	// Start the timer with the given frequency
+	start_timer(frequency);
+
 	while (!stop_flag)
 	{
-		int frequency;						   // LED blink frequency
-		printf("Enter LED blink frequency: "); // prompt user for frequency
-		scanf("%d", &frequency);			   // read frequency from stdin
-
-		// Toggle LEDs at the specified frequency
-		gpio_set_value(GPIO_LED1_PIN, 1); // Turn LED1 ON
-		gpio_set_value(GPIO_LED2_PIN, 0); // Turn LED2 OFF
-
-		usleep(1000000 / (2 * frequency)); // Sleep half of the period
-
-		gpio_set_value(GPIO_LED1_PIN, 0); // Turn LED1 OFF
-		gpio_set_value(GPIO_LED2_PIN, 1); // Turn LED2 ON
-
-		usleep(1000000 / (2 * frequency)); // Sleep half of the period
+		// Main loop can be empty as the signal handler will handle the LED toggling
 	}
+
+	// Cleanup: Stop timer and unexport GPIO pins
+	stop_timer(); // Stop timer
 
 	// Unexport GPIO pins
 	if (unexport_gpio(GPIO_LED1_PIN) == FAILURE || unexport_gpio(GPIO_LED2_PIN) == FAILURE)

@@ -1,6 +1,6 @@
 /*
 
-* File: gpio_control.c
+* File: 2_gpio_control.c
 
 * Name: Vasilaki Gjorgjioski
 
@@ -11,7 +11,7 @@
 * Description: This source file contains the implementation of functions for controlling GPIO pins. It provides functions for exporting and unexporting GPIO pins, setting their direction, setting their value, and getting their value. It also defines constants for the paths of GPIO export and unexport files, as well as constants for GPIO pin numbers.
 
 */
-#include "gpio_control.h" // GPIO control functions
+#include "2_gpio_control.h" // GPIO control functions
 volatile sig_atomic_t stop_flag = 0;
 
 // volatile sig_atomic_t stop_flag = 0; // volatile flag for signal handling
