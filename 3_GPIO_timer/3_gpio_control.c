@@ -89,8 +89,8 @@ int unexport_gpio(const char *gpio_pin)
 // Set GPIO direction
 int gpio_set_dir(const char *gpio_pin, const char *direction)
 {
-    char dir_path[50];                                           // direction file path
-    sprintf(dir_path, "/sys/class/gpio/%s/direction", gpio_pin); // create direction file path
+    char dir_path[50];                                               // direction file path
+    sprintf(dir_path, "/sys/class/gpio/gpio%s/direction", gpio_pin); // create direction file path
 
     int dir_fd = open(dir_path, O_WRONLY); // open direction file
     if (dir_fd == FAILURE)                 // check if file open failed
@@ -113,8 +113,8 @@ int gpio_set_dir(const char *gpio_pin, const char *direction)
 // Set GPIO value
 int gpio_set_value(const char *gpio_pin, int value)
 {
-    char value_path[50];                                       // value file path
-    sprintf(value_path, "/sys/class/gpio/%s/value", gpio_pin); // create value file path
+    char value_path[50];                                           // value file path
+    sprintf(value_path, "/sys/class/gpio/gpio%s/value", gpio_pin); // create value file path
 
     int value_fd = open(value_path, O_WRONLY); // open value file
     if (value_fd == FAILURE)                   //
